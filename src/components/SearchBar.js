@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
-import { TextField, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { useState, useEffect, useContext, useCallback } from 'react';
+import { TextField, Box, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
 import { MovieContext } from '../context/MovieContext';
 import { getGenres } from '../services/api';
 
@@ -8,28 +8,35 @@ function SearchBar({ onSearch }) {
   const [query, setQuery] = useState(lastSearch);
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchGenres = async () => {
+      setLoading(true);
       try {
         const data = await getGenres();
         setGenres(data);
       } catch (err) {
-        console.error(err);
+        console.error('Failed to fetch genres:', err.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchGenres();
   }, []);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (query || selectedGenre) {
-        onSearch(query, selectedGenre);
-        setLastSearch(query);
-      }
-    }, 500);
-    return () => clearTimeout(timeout);
+  const debouncedSearch = useCallback(() => {
+    if (query.trim() || selectedGenre) {
+      console.log(`Triggering search: query=${query}, genre=${selectedGenre}`);
+      onSearch(query.trim(), selectedGenre);
+      setLastSearch(query.trim());
+    }
   }, [query, selectedGenre, onSearch, setLastSearch]);
+
+  useEffect(() => {
+    const timeout = setTimeout(debouncedSearch, 500);
+    return () => clearTimeout(timeout);
+  }, [debouncedSearch]);
 
   return (
     <Box sx={{ mb: 4 }}>
@@ -41,7 +48,7 @@ function SearchBar({ onSearch }) {
         onChange={(e) => setQuery(e.target.value)}
         sx={{ mb: 2 }}
       />
-      <FormControl fullWidth>
+      <FormControl fullWidth disabled={loading}>
         <InputLabel>Genre</InputLabel>
         <Select
           value={selectedGenre}
@@ -56,6 +63,7 @@ function SearchBar({ onSearch }) {
           ))}
         </Select>
       </FormControl>
+      {loading && <CircularProgress size={24} sx={{ mt: 2 }} />}
     </Box>
   );
 }

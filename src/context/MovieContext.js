@@ -1,25 +1,43 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from 'react';
 
 export const MovieContext = createContext();
 
 export function MovieProvider({ children }) {
   const [favorites, setFavorites] = useState(() => {
-    return JSON.parse(localStorage.getItem("favorites")) || [];
+    try {
+      return JSON.parse(localStorage.getItem('favorites')) || [];
+    } catch {
+      return [];
+    }
   });
   const [lastSearch, setLastSearch] = useState(() => {
-    return localStorage.getItem("lastSearch") || "";
+    try {
+      return localStorage.getItem('lastSearch') || '';
+    } catch {
+      return '';
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+    try {
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    } catch (err) {
+      console.error('Failed to save favorites to localStorage:', err);
+    }
   }, [favorites]);
 
   useEffect(() => {
-    localStorage.setItem("lastSearch", lastSearch);
+    try {
+      localStorage.setItem('lastSearch', lastSearch);
+    } catch (err) {
+      console.error('Failed to save lastSearch to localStorage:', err);
+    }
   }, [lastSearch]);
 
   const addFavorite = (movieId) => {
-    setFavorites((prev) => [...prev, movieId]);
+    if (!favorites.includes(movieId)) {
+      setFavorites((prev) => [...prev, movieId]);
+    }
   };
 
   const removeFavorite = (movieId) => {

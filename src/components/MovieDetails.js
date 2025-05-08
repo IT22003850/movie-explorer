@@ -1,57 +1,76 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Box, Chip, Alert } from '@mui/material';
+import { Container, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import { getMovieDetails } from '../services/api';
 
 function MovieDetails() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchMovie = async () => {
+      setLoading(true);
       try {
         const data = await getMovieDetails(id);
         setMovie(data);
       } catch (err) {
-        setError(err.message);
+        setError('Failed to load movie details. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
     fetchMovie();
   }, [id]);
 
-  if (error) return <Alert severity="error">{error}</Alert>;
-  if (!movie) return <Typography>Loading...</Typography>;
+  if (loading) {
+    return (
+      <Container sx={{ py: 4 }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
 
-  const imageUrl = movie.poster_path
-    ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-    : 'https://via.placeholder.com/300x450?text=No+Poster';
+  if (error) {
+    return (
+      <Container sx={{ py: 4 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
+  }
+
+  if (!movie) {
+    return (
+      <Container sx={{ py: 4 }}>
+        <Typography variant="h6">Movie not found.</Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container sx={{ py: 4 }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        {movie.title}
+      </Typography>
+      <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', md: 'row' } }}>
+        <img
+          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          alt={movie.title}
+          style={{ maxWidth: '300px', borderRadius: '8px' }}
+        />
         <Box>
-          <img src={imageUrl} alt={movie.title} style={{ maxWidth: '100%' }} />
-        </Box>
-        <Box sx={{ flex: 1, minWidth: 300 }}>
-          <Typography variant="h4" gutterBottom>
-            {movie.title}
-          </Typography>
           <Typography variant="body1" paragraph>
-            {movie.overview || 'No overview available.'}
+            <strong>Overview:</strong> {movie.overview}
           </Typography>
-          <Typography variant="body2">
-            <strong>Release Date:</strong>{' '}
-            {movie.release_date ? new Date(movie.release_date).toLocaleDateString() : 'N/A'}
+          <Typography variant="body1">
+            <strong>Release Date:</strong> {movie.release_date}
           </Typography>
-          <Typography variant="body2">
-            <strong>Rating:</strong> {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
+          <Typography variant="body1">
+            <strong>Rating:</strong> {movie.vote_average}/10
           </Typography>
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            <strong>Genres:</strong>{' '}
-            {movie.genres.map((genre) => (
-              <Chip key={genre.id} label={genre.name} sx={{ mr: 1 }} />
-            ))}
+          <Typography variant="body1">
+            <strong>Genres:</strong> {movie.genres.map((g) => g.name).join(', ')}
           </Typography>
         </Box>
       </Box>

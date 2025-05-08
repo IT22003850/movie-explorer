@@ -1,32 +1,30 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
+import { MovieProvider } from './context/MovieContext';
+import { useThemeMode, getTheme } from './styles/theme';
 import Home from './pages/Home';
-import MovieDetails from './pages/MovieDetails';
-import Favorites from './pages/Favorites';
+import MovieDetails from './components/MovieDetails';
+import Favorites from './components/Favorites';
 import Login from './pages/Login';
 import Header from './components/Header';
-import { MovieProvider } from './context/MovieContext';
-import { getTheme, useThemeMode } from './styles/theme';
 
 function App() {
   const { mode } = useThemeMode();
-  const theme = getTheme(mode);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <MovieProvider>
+    <MovieProvider>
+      <ThemeProvider theme={getTheme(mode)}>
         <Router>
           <Header />
           <Routes>
-            <Route path="/login" element={<Login />} />
             <Route path="/" element={<Home />} />
             <Route path="/movie/:id" element={<MovieDetails />} />
             <Route path="/favorites" element={<Favorites />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </Router>
-      </MovieProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </MovieProvider>
   );
 }
 
