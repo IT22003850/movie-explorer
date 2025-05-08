@@ -1,8 +1,13 @@
-import { Card, CardMedia, CardContent, Typography, Box } from '@mui/material';
+import { useContext } from 'react';
+import { Card, CardMedia, CardContent, Typography, Box, IconButton } from '@mui/material';
+import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { MovieContext } from '../context/MovieContext';
 
 function MovieCard({ movie }) {
   const navigate = useNavigate();
+  const { favorites, addFavorite, removeFavorite } = useContext(MovieContext);
+  const isFavorite = favorites.includes(movie.id);
   const imageUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
     : 'https://via.placeholder.com/200x300?text=No+Poster';
@@ -28,6 +33,16 @@ function MovieCard({ movie }) {
         <Typography variant="body2">
           Rating: {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
         </Typography>
+        <Box sx={{ textAlign: 'right' }}>
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              isFavorite ? removeFavorite(movie.id) : addFavorite(movie.id);
+            }}
+          >
+            {isFavorite ? <Favorite color="error" /> : <FavoriteBorder />}
+          </IconButton>
+        </Box>
       </CardContent>
     </Card>
   );
