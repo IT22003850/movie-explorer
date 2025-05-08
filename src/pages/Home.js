@@ -22,13 +22,19 @@ function Home() {
     }
   };
 
-  const handleSearch = async (query) => {
+  const handleSearch = async (query, genreId) => {
     setIsSearching(true);
     setMovies([]);
     setPage(1);
     try {
       const data = await searchMovies(query, 1);
-      setMovies(data.results);
+      let filteredMovies = data.results;
+      if (genreId) {
+        filteredMovies = data.results.filter((movie) =>
+          movie.genre_ids.includes(Number(genreId))
+        );
+      }
+      setMovies(filteredMovies);
       setHasMore(data.page < data.total_pages);
     } catch (err) {
       setError(err.message);
