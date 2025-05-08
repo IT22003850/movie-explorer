@@ -3,7 +3,7 @@
 A React-based web application for browsing, searching, and favoriting movies using the TMDb API. The app features a responsive, mobile-first UI with light/dark mode, persistent search, youtube trailers, user authentication, and advanced filtering, deployed on Netlify.
 
 ## Live Demo
-[https://your-app-name.netlify.app](https://your-app-name.netlify.app) *(Replace with your Netlify URL after deployment)*
+https://movie-explorer-thilina.netlify.app/
 
 ## Features
 - **Trending Movies**: Browse trending movies from TMDb with a "Load More" button for pagination.
