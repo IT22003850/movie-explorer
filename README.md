@@ -1,70 +1,119 @@
-# Getting Started with Create React App
+# Movie Explorer App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based web application for browsing, searching, and favoriting movies using the TMDb API. The app features a responsive, mobile-first UI with light/dark mode, persistent search, youtube trailers, user authentication, and advanced filtering, deployed on Netlify.
 
-## Available Scripts
+## Live Demo
+[https://your-app-name.netlify.app](https://your-app-name.netlify.app) *(Replace with your Netlify URL after deployment)*
 
-In the project directory, you can run:
+## Features
+- **Trending Movies**: Browse trending movies from TMDb with a "Load More" button for pagination.
+- **Search & Filters**: Search movies by title, filter by genre, release year, and minimum rating.
+- **Search Persistence**: Retains the last searched movie query in `localStorage`, restoring it on page refresh.
+- **Reset Search**: Clears search query and filters to return to trending movies.
+- **Movie Details**: Displays detailed movie info, including cast and YouTube trailer links.
+- **Favorites**: Add/remove movies to a favorites list, persisted in `localStorage`.
+- **Authentication**: Simple login/logout system with username/password, stored in `localStorage`.
+- **Light/Dark Mode**: Toggle between themes with high-contrast inputs and visible UI elements (e.g., search box text, favorites button).
+- **Responsive Design**: Mobile-first layout using Material-UI Grid, adapting to screen sizes (1-column on mobile, 4-column on desktop).
+- **Error Handling**: User-friendly alerts for API failures or empty search results.
 
-### `npm start`
+## Tech Stack
+- **Frontend**: React, Material-UI (MUI), React Router
+- **State Management**: React Context API, `localStorage`
+- **API**: The Movie Database (TMDb) API
+- **Deployment**: Netlify
+- **Tools**: Webpack, ESLint, GitLab/Github
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Project Structure
+```
+├── src/
+│   ├── components/        # Reusable UI components
+│   │   ├── Favorites.js   # Favorites list page
+│   │   ├── Header.js      # Navigation bar with login/theme toggle
+│   │   ├── MovieCard.js   # Movie card with favorite button
+│   │   ├── MovieDetails.js # Detailed movie view with cast/trailer
+│   │   ├── SearchBar.js   # Search input and filter dropdowns
+│   ├── context/           # React Context for state management
+│   │   ├── MovieContext.js # Manages search, favorites, user, theme
+│   ├── pages/             # Page components
+│   │   ├── Home.js        # Home page with trending/search results
+│   │   ├── Login.js       # Login page
+│   ├── services/          # API service functions
+│   │   ├── api.js         # TMDb API calls
+│   ├── styles/            # Theme configuration
+│   │   ├── theme.js       # MUI theme for light/dark mode
+│   ├── App.js             # Main app with routing
+│   ├── index.js           # Entry point
+├── .env                   # Environment variables (not committed)
+├── package.json           # Dependencies and scripts
+├── README.md              # Project documentation
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup Instructions
+1. **Clone the Repository**:
+   ```bash
+   git clone https://gitlab.com/your-username/your-repo.git
+   cd your-repo
+   ```
 
-### `npm test`
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. **Set Up Environment Variables**:
+   - Create a `.env` file in the root directory.
+   - Add your TMDb API key (obtain from [themoviedb.org](https://www.themoviedb.org)):
+     ```
+     REACT_APP_TMDB_API_KEY=your_api_key_here
+     ```
 
-### `npm run build`
+4. **Run Locally**:
+   ```bash
+   npm start
+   ```
+   - Opens `http://localhost:3000` in your browser.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5. **Build for Production**:
+   ```bash
+   npm run build
+   ```
+   - Outputs files to the `build/` directory.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+6. **Lint Code**:
+   ```bash
+   npx eslint src
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## API Usage
+- **TMDb API**: Powers movie data retrieval.
+- **Endpoints**:
+  - Trending: `GET /trending/movie/week`
+  - Search: `GET /search/movie`
+  - Movie Details: `GET /movie/{id}`
+  - Cast: `GET /movie/{id}/credits`
+  - Genres: `GET /genre/movie/list`
+- **API Key**: Stored in `REACT_APP_TMDB_API_KEY` environment variable.
+- **Error Handling**: Catches network errors and invalid responses, displaying alerts (e.g., "Search failed. Please check your connection.").
 
-### `npm run eject`
+## Deployment
+The app is deployed on Netlify with continuous deployment from the `main` branch.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Testing
+- **Local Testing**:
+  - Run `npm start` and test:
+    - Search for "ben 10", apply filters (Animation, 2005, 6), verify results.
+    - Click Reset Search, confirm trending movies load.
+    - Refresh after searching, confirm search bar retains query and results load.
+    - Add/remove favorites, check `/favorites`.
+    - Toggle light/dark mode, verify search box and favorites button visibility.
+    - Log in/out, check header updates.
+    - Resize browser to test responsive grid (1-column mobile, 4-column desktop).
+  - Run `npx eslint src` for code quality.
+  - Build locally: `npm run build`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Credits
+- Built as part of an internship selection process.
+- Movie data from [TMDb API](https://www.themoviedb.org).
+- UI components from [Material-UI](https://mui.com).
