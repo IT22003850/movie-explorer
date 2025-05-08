@@ -1,18 +1,34 @@
 import { createTheme } from '@mui/material/styles';
+import { useState, useEffect } from 'react';
 
-const theme = createTheme({
-  palette: {
-    mode: 'light', // Toggle to 'dark' for dark mode
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-  typography: {
-    fontFamily: 'Roboto, Arial, sans-serif',
-  },
-});
+export function useThemeMode() {
+  const [mode, setMode] = useState(() => {
+    return localStorage.getItem('themeMode') || 'light';
+  });
 
-export default theme;
+  useEffect(() => {
+    localStorage.setItem('themeMode', mode);
+  }, [mode]);
+
+  const toggleTheme = () => {
+    setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  return { mode, toggleTheme };
+}
+
+export const getTheme = (mode) =>
+  createTheme({
+    palette: {
+      mode,
+      primary: {
+        main: '#1976d2',
+      },
+      secondary: {
+        main: '#dc004e',
+      },
+    },
+    typography: {
+      fontFamily: 'Roboto, Arial, sans-serif',
+    },
+  });
